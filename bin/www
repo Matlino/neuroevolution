@@ -23,7 +23,9 @@ var server = http.createServer(app);
 
 var io = require('socket.io').listen(server);
 
-var serverChat = require('../public/javascripts/serverChat.js')
+//exporting io variable to other js files
+module.exports = io;
+var serverChat = require('../server/listeners.js');
 serverChat(io);
 /**
  * Listen on provided port, on all network interfaces.

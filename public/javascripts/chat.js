@@ -1,12 +1,4 @@
-function draw(){
-    var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
-    ctx.font = "30px Arial";
-    ctx.fillText("Hello World",10,30);
-}
-
 jQuery(function($){
-    console.log("CYOLOalamada");
     var socket = io.connect();
     var $nickForm = $('#setNick');
     var $nickError = $('#nickError');
@@ -51,6 +43,8 @@ jQuery(function($){
     });
 
     socket.on('new message', function(data){
+        console.log("Message recieved");
+
         $chat.append('<span class="msg"> <b>' + data.nick + ': </b>' + data.msg + "</span><br/>");
         $chat.scrollTop = $chat.bottom;
     });
