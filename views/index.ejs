@@ -27,6 +27,20 @@
         font-style: italic;
       }
 
+      body{
+          background: #333;
+      }
+
+      #canvas_container {
+          width: 1000px;
+          margin: 20px auto;
+      }
+
+      #myCanvas {
+          background: #FFF;
+          border: #999 1px solid;
+      }
+
     </style>
 
     <!--<script src="jquery-1.11.3.js"></script>-->
@@ -35,6 +49,10 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="javascripts/chat.js" type="text/javascript" ></script>
+    <script src="javascripts/painting.js" type="text/javascript" ></script>
+    <script src="javascripts/Keys.js" type="text/javascript" ></script>
+
+
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="/socket.io/socket.io.js"></script>
   </head>
@@ -62,72 +80,19 @@
     <div id="users"></div>
   </div>
 
-  <canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;">
-  </canvas>
+  <div id="canvas_container">
+      <canvas id="myCanvas" width="1000" height="500">
+          <p>U have old browser bro</p>
+      </canvas>
+  </div>
 
   <script>
-
-    window.onload = draw();
-    console.log("Calamada");
-
-
+    //window.onload = draw();
+    window.addEventListener('load', function(event){
+       initCanvas();
+       //draw();
+    });
   </script>
 
-  <!--<script>-->
-    <!--jQuery(function($){-->
-        <!--console.log("CYOLOalamada");-->
-      <!--var socket = io.connect();-->
-      <!--var $nickForm = $('#setNick');-->
-      <!--var $nickError = $('#nickError');-->
-      <!--var $nickBox = $('#nickname');-->
-
-      <!--var $messageBox = $('#message');-->
-      <!--var $messageForm = $('#send-message');-->
-      <!--var $chat = $('#chat');-->
-
-      <!--var $users = $('#users');-->
-
-      <!--$nickForm.submit(function(e){-->
-        <!--e.preventDefault();-->
-        <!--socket.emit('new user',$nickBox.val(), function(data){-->
-          <!--if (data){-->
-            <!--$('#nickWrap').hide();-->
-            <!--$('#contentWrap').show();-->
-          <!--}else{-->
-            <!--$nickError.html('That username is already taken! Try again.');-->
-          <!--}-->
-        <!--});-->
-        <!--$nickBox.val('');-->
-      <!--});-->
-
-      <!--socket.on('usernames', function(data){-->
-        <!--var html = '';-->
-        <!--for (i=0; i<data.length; i++){-->
-          <!--html += data[i] + '<br/>';-->
-        <!--}-->
-        <!--$users.html(html);-->
-      <!--});-->
-
-      <!--$messageForm.submit(function(e){-->
-        <!--e.preventDefault();-->
-        <!--socket.emit('send message',$messageBox.val(), function(data){-->
-          <!--//user didnt put name to whisper or woring name-->
-          <!--$chat.append('<span class="error ">' + data + "</span><br/>");-->
-        <!--});-->
-        <!--//aj taketo veci mozes posielat akoze objekt-->
-        <!--//socket.emit('send message',{name: "matlo", msg: message.val()});-->
-        <!--$messageBox.val('');-->
-      <!--});-->
-
-      <!--socket.on('new message', function(data){-->
-        <!--$chat.append('<span class="msg"> <b>' + data.nick + ': </b>' + data.msg + "</span><br/>");-->
-        <!--$chat.scrollTop = $chat.bottom;-->
-      <!--});-->
-
-      <!--socket.on('whisper', function (data) {-->
-        <!--$chat.append('<span class="whisper"> <b>' + data.nick + ': </b>' + data.msg + "</span><br/>");-->
-      <!--});-->
-    <!--});-->
-  <!--</script>-->
   </body>
 </html>
