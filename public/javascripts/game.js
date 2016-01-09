@@ -1,6 +1,6 @@
 var bg = new Image();
 bg.src = "images/space.jpg";
-var players = [];
+
 
 var ctx,			// Canvas rendering context
     keys,			// Keyboard input
@@ -18,68 +18,6 @@ function initCanvas(){
     canvasHeight = ctx.canvas.height;
 
     socket = io.connect();
-
-    function background(){
-        this.x = 0;
-        this.y = 0;
-        this.width = bg.width;
-        this.height = bg.height;
-        this.render = function(){
-            ctx.drawImage(bg, this.x--, this.y);
-            if (this.x <= -499){
-                this.x = 0;
-            }
-        }
-    }
-
-
-    var player = new Player(50,50,100,100);
-
-
-    var background = new background();
-
-
-    //function animate(){
-    //    ctx.save();
-    //    ctx.clearRect(0,0,canvasWidth,canvasHeight);
-    //
-    //    //background.render();
-    //    console.log(players.length);
-    //    for (i = 0; i < players.length; i++){
-    //        players[i].render();
-    //    }
-    //
-    //    //ctx.rotate(-.3);
-    //    ctx.restore();
-    //}
-    //
-    //var animateInterval = setInterval(animate, 30);
-
-    var delta = 5;
-    document.addEventListener('keydown', function(event){
-       var key_press = String.fromCharCode(event.keyCode);
-        //alert(event.keyCode+" "+key_press);
-
-        if (key_press == "W"){
-            player.y -= delta;
-        }
-        if(key_press == "S"){
-            player.y += delta;
-        }
-        if(key_press == "A"){
-            player.x -= delta;
-        }
-        if(key_press == "D"){
-            player.x += delta;
-        }
-
-        //socket.emit('coordinates',{x: player.x, y: player.y});
-    });
-
-    //listener for clicking on caanvas
-    //ctx.canvas.addEventListener('click', function(event){
-    //    clearInterval(animateInterval);
-    //});
 
     var startX = Math.round(Math.random()*(canvasWidth-5)),
         startY = Math.round(Math.random()*(canvasHeight-5));
@@ -143,63 +81,6 @@ function onRemovePlayer(data) {
 
     remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
 }
-
-
-var Player = function(startX, startY) {
-    var x = startX,
-        y = startY,
-        id,
-        moveAmount = 2;
-
-    var getX = function() {
-        return x;
-    };
-
-    var getY = function() {
-        return y;
-    };
-
-    var setX = function(newX) {
-        x = newX;
-    };
-
-    var setY = function(newY) {
-        y = newY;
-    };
-
-    var update = function(keys) {
-        var prevX = x,
-            prevY = y;
-        // Up key takes priority over down
-        if (keys.up) {
-            y -= moveAmount;
-        } else if (keys.down) {
-            y += moveAmount;
-        }
-
-        // Left key takes priority over right
-        if (keys.left) {
-            x -= moveAmount;
-        } else if (keys.right) {
-            x += moveAmount;
-        }
-
-        return (prevX != x || prevY != y) ? true : false;
-    };
-
-    var draw = function(ctx) {
-        ctx.fillRect(x-5, y-5, 10, 10);
-    };
-
-    return {
-        getX: getX,
-        getY: getY,
-        setX: setX,
-        setY: setY,
-        update: update,
-        draw: draw
-    }
-};
 
 var setEventHandlers = function() {
     // Keyboard

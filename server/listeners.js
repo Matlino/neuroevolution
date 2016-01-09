@@ -2,7 +2,7 @@ var util = require("util");
 var gameServer = require("./gameServer");
 var chatServer = require("./chatServer");
 
-Player = require("./Player").Player;
+
 
 gameServer.init();
 

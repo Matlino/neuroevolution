@@ -1,6 +1,7 @@
 var util = require("util");
 
 var players;
+Player = require("./Player").Player;
 
 module.exports = {
     onClientDisconnect: function(){
