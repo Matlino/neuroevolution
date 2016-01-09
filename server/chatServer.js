@@ -1,7 +1,7 @@
 var util = require("util");
 
 var users = {};
-var io = require("../../bin/www");
+var io = require("../bin/www");
 
 
 module.exports = {
