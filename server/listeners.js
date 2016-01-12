@@ -2,8 +2,6 @@ var util = require("util");
 var gameServer = require("./gameServer");
 var chatServer = require("./chatServer");
 
-
-
 gameServer.init();
 
 //we are calling this export in /bin/www.js so we can pass io as argument here

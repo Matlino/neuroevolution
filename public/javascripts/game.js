@@ -10,6 +10,7 @@ var ctx,			// Canvas rendering context
 
 var canvasWidth;
 var canvasHeight;
+var food;
 
 
 function initCanvas(){
@@ -26,6 +27,7 @@ function initCanvas(){
 
     keys = new Keys();
     remotePlayers = [];
+    food = [];
 
     setEventHandlers();
 
@@ -35,8 +37,17 @@ function initCanvas(){
     socket.on("move player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
 
+    socket.on("food", displayFood);
+
+
     var animateInterval = setInterval(animate, 30);
     //animate();
+}
+
+var newFood;
+function displayFood(data){
+    newFood = new Food(data.x, data.y);
+    food.push(newFood);
 }
 
 
@@ -65,7 +76,7 @@ function onMovePlayer(data) {
     if (!movePlayer) {
         console.log("Player not found: "+data.id);
         return;
-    };
+    }
 
     movePlayer.setX(data.x);
     movePlayer.setY(data.y);
@@ -117,6 +128,7 @@ function onResize(e) {
  ** GAME ANIMATION LOOP
  **************************************************/
 function animate() {
+
     update();
     draw();
 
@@ -130,6 +142,11 @@ function animate() {
 function update() {
     if (localPlayer.update(keys)) {
         socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
+
+        //chcek collision with food
+       /* for (var i= 0; i < food.length; i++ ){
+            if ()
+        }*/
     }
 }
 
@@ -146,6 +163,10 @@ function draw() {
     var i;
     for (i = 0; i < remotePlayers.length; i++) {
         remotePlayers[i].draw(ctx);
+    }
+
+    for (i = 0; i < food.length; i++) {
+        food[i].draw(ctx);
     }
 }
 

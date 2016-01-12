@@ -95,3 +95,7 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
+
+//testin neural networks
+var neural = require('../server/neuralNet.js');
+neural();

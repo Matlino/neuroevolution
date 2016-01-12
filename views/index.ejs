@@ -48,19 +48,24 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
     <script src="javascripts/chat.js" type="text/javascript" ></script>
     <script src="javascripts/game.js" type="text/javascript" ></script>
     <script src="javascripts/Keys.js" type="text/javascript" ></script>
-    <script src="javascripts/Player.js" type="text/javascript" ></script>
+
+      <script src="javascripts/objects/Object2D.js" type="text/javascript" ></script>
+      <script src="javascripts/objects/Player.js" type="text/javascript" ></script>
+      <script src="javascripts/objects/Food.js" type="text/javascript" ></script>
 
 
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+      <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
 
 
   <div id="nickWrap">
+    <p><%= title %></p>
     <p>Enter a username:</p>
     <p id="nickError"></p>
     <form id="setNick">
@@ -82,7 +87,7 @@
   </div>
 
   <div id="canvas_container">
-      <canvas id="myCanvas" width="1000" height="500">
+      <canvas id="myCanvas" width=<%= width %> height=<%= height %>>
           <p>U have old browser bro</p>
       </canvas>
   </div>
