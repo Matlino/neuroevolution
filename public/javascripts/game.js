@@ -11,7 +11,7 @@ var ctx,			// Canvas rendering context
 var canvasWidth;
 var canvasHeight;
 var food;
-
+var deers;
 
 function initCanvas(){
     ctx = document.getElementById("myCanvas").getContext("2d");
@@ -20,14 +20,19 @@ function initCanvas(){
 
     socket = io.connect();
 
+
+
     var startX = Math.round(Math.random()*(canvasWidth-5)),
         startY = Math.round(Math.random()*(canvasHeight-5));
 
     localPlayer = new Player(startX, startY);
 
     keys = new Keys();
+
+    //init arrays
     remotePlayers = [];
     food = [];
+    deers = [];
 
     setEventHandlers();
 
@@ -38,16 +43,23 @@ function initCanvas(){
     socket.on("remove player", onRemovePlayer);
 
     socket.on("food", displayFood);
+    socket.on("deers", displayDeers);
 
 
     var animateInterval = setInterval(animate, 30);
     //animate();
 }
 
-var newFood;
 function displayFood(data){
-    newFood = new Food(data.x, data.y);
-    food.push(newFood);
+    for (var i=0;i<data.length; i++ ){
+        food.push(new Food(data[i].x, data[i].y));
+    }
+}
+
+function displayDeers(data){
+    for (var i=0;i<data.length; i++ ){
+        deers.push(new Deer(data[i].x, data[i].y));
+    }
 }
 
 
@@ -129,8 +141,11 @@ function onResize(e) {
  **************************************************/
 function animate() {
 
+
     update();
     draw();
+
+    localPlayer.getEyesValues(food);
 
     // Request a new animation frame using Paul Irish's shim
     //window.requestAnimFrame(animate);
@@ -139,15 +154,53 @@ function animate() {
 /**************************************************
  ** GAME UPDATE
  **************************************************/
+//checking collision function should ne in object file probably
+//server should have probably his won update function where he check collision of all objects at once
 function update() {
     if (localPlayer.update(keys)) {
         socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
 
         //chcek collision with food
-       /* for (var i= 0; i < food.length; i++ ){
-            if ()
-        }*/
+        var playerSizeX = localPlayer.getSizeX();
+        var playerSizeY = localPlayer.getSizeY();
+        var playerX = localPlayer.getX();
+        var playerY = localPlayer.getY();
+
+        //for (var i= 0; i < deers.length; i++ ) {
+            for (var i = 0; i < food.length; i++) {
+                if ((playerX + playerSizeX / 2 >= food[i].getX() - food[i].getSizeX() / 2
+                    && playerX - playerSizeX / 2 <= food[i].getX() + food[i].getSizeX() / 2)
+                    && (playerY + playerSizeY / 2 >= food[i].getY() - food[i].getSizeY() / 2
+                    && playerY - playerSizeY / 2 <= food[i].getY() + food[i].getSizeY() / 2)) {
+                    food.splice(i, 1);
+                    socket.emit("food", food);
+                }
+
+                //if ((deers[i].getX() + deers[i].getSizeX() / 2 >= food[j].getX() - food[j].getSizeX() / 2
+                //    && deers[i].getX() - deers[i].getSizeX() / 2 <= food[j].getX() + food[j].getSizeX() / 2)
+                //    && (deers[i].getY() + deers[i].getSizeY() / 2 >= food[j].getY() - food[j].getSizeY() / 2
+                //    && deers[i].getY() - deers[i].getSizeY() / 2 <= food[j].getY() + food[j].getSizeY() / 2)) {
+                //    food.splice(i, 1);
+                //    socket.emit
+                //}
+            }
+       //}
+
+
     }
+
+    //sending eyesvalues of deers to server
+    var eyesValuesArray = [];
+    for (i= 0; i < deers.length; i++ ) {
+        eyesValuesArray.push(deers[i].getEyesValues(food));
+    }
+
+    socket.emit("eyesvalues", eyesValuesArray, function(data){
+        //console.log("Callback works, index: " + data);
+        for (i= 0; i < deers.length; i++ ) {
+            deers[i].update(data[i]);
+        }
+    });
 }
 
 /**************************************************
@@ -167,6 +220,10 @@ function draw() {
 
     for (i = 0; i < food.length; i++) {
         food[i].draw(ctx);
+    }
+
+    for (i = 0; i < deers.length; i++) {
+        deers[i].draw(ctx);
     }
 }
 

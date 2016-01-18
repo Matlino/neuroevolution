@@ -20,6 +20,10 @@ module.exports = function (io){
         socket.on("disconnect", gameServer.onClientDisconnect);
         socket.on("new player", gameServer.onNewPlayer);
         socket.on("move player", gameServer.onMovePlayer);
+
+        //evolution listeners
+        socket.on("food", gameServer.onUpdateFood);
+        socket.on("eyesvalues", gameServer.onEyesValues);
     });
 };
 

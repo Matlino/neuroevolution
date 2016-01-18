@@ -96,6 +96,4 @@ function onListening() {
 }
 
 
-//testin neural networks
-var neural = require('../server/neuralNet.js');
-neural();
+

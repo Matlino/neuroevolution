@@ -4,9 +4,13 @@ var io = require("../bin/www");
 var config = require('../config');
 var Player = require("../public/javascripts/objects/Player");
 var Food = require("../public/javascripts/objects/Food");
+var Deer = require("../public/javascripts/objects/Deer");
+var neuralNet = require('../server/neuralNet.js');
+
 
 var players;
 var food;
+var deers;
 
 
 
@@ -46,13 +50,12 @@ module.exports = {
 
         util.log("New player has been created");
 
-        //send coordinates of all food to a new client
-        var existingFood;
-        for (i = 0; i < food.length; i++) {
-            existingFood = food[i];
-            this.emit("food", {x: existingFood.getX(), y: existingFood.getY()});
-        }
-
+        //send  food and deers to client
+        this.emit("food", food);
+        this.emit("deers", deers);
+        //for (i = 0; i < deers.length; i++) {
+        //    this.emit("deers", {x: deers[i].getX(), y: deers[i].getY()});
+        //}
     },
 
     onMovePlayer: function (data) {
@@ -72,13 +75,34 @@ module.exports = {
     init: function() {
         players = [];
         food = [];
+        deers = [];
 
-        var startX, startY, newFood;
+        var startX, startY;
 
-        startX = Math.round(Math.random()*(config.canvasWidth-5));
-        startY = Math.round(Math.random()*(config.canvasHeight-5));
-        newFood = new Food(startX, startY);
-        food.push(newFood);
+        //to do - add cycle to add more food
+        for(var i=0;i<config.foodCount;i++){
+            startX = Math.round(Math.random()*(config.canvasWidth-5));
+            startY = Math.round(Math.random()*(config.canvasHeight-5));
+            food.push(new Food(startX, startY));
+        }
+
+        for(i=0;i<config.deerCount;i++){
+            startX = Math.round(Math.random()*(config.canvasWidth-5));
+            startY = Math.round(Math.random()*(config.canvasHeight-5));
+            deers.push(new Deer(startX, startY));
+        }
+    },
+
+    //TO DO
+    onUpdateFood: function(data){
+        console.log(data.length);
+        //food = data;
+
+    },
+
+    //throw eyesvalues into neural net and return direction which should deer move
+    onEyesValues: function(data, callback){
+        callback(neuralNet(data));
     }
 };
 

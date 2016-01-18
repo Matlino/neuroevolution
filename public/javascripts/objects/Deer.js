@@ -1,40 +1,18 @@
-//this mean Player extend Object2D
 if(typeof module != "undefined") {
     Object2D = require("./Object2D");
 }
 
-Player.prototype = Object.create(Object2D.prototype);
+Deer.prototype = Object.create(Object2D.prototype);
 
-function Player(startX, startY) {
+function Deer(startX, startY) {
     //call constructor of Object2D
     Object2D.call(this, startX, startY);
 
     this.id = 0;
     this.moveAmount = 2;
 
-    this.update = function(keys){
-
-        var prevX = this.x,
-            prevY = this.y;
-        // Up key takes priority over down
-        if (keys.up) {
-            this.y -= this.moveAmount;
-        } else if (keys.down) {
-            this.y += this.moveAmount;
-        }
-
-        // Left key takes priority over right
-        if (keys.left) {
-            this.x -= this.moveAmount;
-        } else if (keys.right) {
-            this.x += this.moveAmount;
-        }
-
-        return (prevX != this.x || prevY != this.y) ? true : false;
-    };
-
     this.draw = function(ctx) {
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "blue";
         ctx.fillRect(this.x-5, this.y-5, this.sizeX, this.sizeY);
     };
 
@@ -110,16 +88,23 @@ function Player(startX, startY) {
         //console.log(topEyeSum / topEyeFoodCount + " " + rightEyeSum / rightEyeFoodCount + " " + bottomEyeSum / bottomEyeFoodCount);
         //console.log(topEyeFoodCount + " " + rightEyeFoodCount + " " + bottomEyeFoodCount + " " + leftEyeFoodCount);
 
+        //console.log("eyevalues: "+eyesValues);
+
         return eyesValues;
-    }
-}
+    };
 
-
-function getDistance(a, b){
-    return Math.sqrt(Math.pow(Math.abs(a.getX() - b.getX()), 2) + Math.pow(Math.abs(a.getY() - b.getY()), 2));
+    //direction 0 = top, 1 = right, 2 = bottom, 3 = left
+    this.update = function(direction){
+        switch (direction){
+            case 0 : this.y -= this.moveAmount; break;
+            case 1 : this.x += this.moveAmount; break;
+            case 2 : this.y += this.moveAmount; break;
+            case 3 : this.x -= this.moveAmount; break;
+        }
+    };
 }
 
 if(typeof module != "undefined")
-    module.exports = Player;
+    module.exports = Deer;
 
 
