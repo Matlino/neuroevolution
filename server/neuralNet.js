@@ -69,6 +69,8 @@ module.exports = function(eyesValues){
 
     //console.log(output.indexOf(Math.max.apply( Math, output )));
 
+
+    //returning array of directions, so array is as long as count of deers
     return directions;
 
  ////train the network
