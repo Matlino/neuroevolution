@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="25b31c03-f638-49e8-8773-f424a7a2cdf7" name="Default" comment="add specific neural net to every deer, neural networks are stored in objects on client side and send to server for activation">
+    <list default="true" id="25b31c03-f638-49e8-8773-f424a7a2cdf7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="chatExpress.iws" />
@@ -36,8 +36,8 @@
       <file leaf-file-name="gameServer.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/gameServer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2419175">
-              <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.8104794">
+              <caret line="43" column="40" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -428,7 +428,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453818292362</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add specific neural net to every deer, neural networks are stored in objects on client side and send to server for activation">
+      <created>1453818344333</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1453818344333</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -834,8 +840,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server/gameServer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2419175">
-          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8104794">
+          <caret line="43" column="40" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
           <folding />
         </state>
       </provider>
