@@ -87,8 +87,10 @@ module.exports = {
         var directions = [];
         for (var i = 0; i < deerNetworks.length; i++) {
             //myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
-            output = myNetwork.activate(deerNetworks[i].eyesValues);
-            directions.push(output.indexOf(Math.max.apply(Math, output)));
+            //output = myNetwork.activate(deerNetworks[i].eyesValues);
+            //directions.push(output.indexOf(Math.max.apply(Math, output)));
+
+            directions.push(1);
         }
 
 

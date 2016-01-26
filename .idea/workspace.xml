@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="25b31c03-f638-49e8-8773-f424a7a2cdf7" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.js" afterPath="$PROJECT_DIR$/config.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/neuralNet.js" afterPath="$PROJECT_DIR$/server/neuralNet.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -78,8 +77,8 @@
       <file leaf-file-name="neuralNet.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/neuralNet.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7346711">
-              <caret line="89" column="12" selection-start-line="89" selection-start-column="12" selection-end-line="89" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.79152733">
+              <caret line="92" column="29" selection-start-line="92" selection-start-column="29" selection-end-line="92" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -460,7 +459,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453818678931</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="testing performance">
+      <created>1453834020011</created>
+      <option name="number" value="00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1453834020011</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -502,7 +507,8 @@
     <MESSAGE value="test commit from webstorm" />
     <MESSAGE value="add specific neural net to every deer, neural networks are stored in objects on client side and send to server for activation" />
     <MESSAGE value="only 2 deers" />
-    <option name="LAST_COMMIT_MESSAGE" value="only 2 deers" />
+    <MESSAGE value="testing performance" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing performance" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -851,14 +857,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/chatServer.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -867,10 +865,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server/neuralNet.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7346711">
-          <caret line="89" column="12" selection-start-line="89" selection-start-column="12" selection-end-line="89" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.79152733">
+          <caret line="92" column="29" selection-start-line="92" selection-start-column="29" selection-end-line="92" selection-end-column="29" />
           <folding />
         </state>
       </provider>
