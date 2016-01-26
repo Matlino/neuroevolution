@@ -4,12 +4,13 @@ if(typeof module != "undefined") {
 
 Deer.prototype = Object.create(Object2D.prototype);
 
-function Deer(startX, startY) {
+function Deer(startX, startY, neuralNetwork) {
     //call constructor of Object2D
     Object2D.call(this, startX, startY);
 
     this.id = 0;
     this.moveAmount = 2;
+    this.neuralNetwork = neuralNetwork;
 
     this.draw = function(ctx) {
         ctx.fillStyle = "blue";
@@ -81,8 +82,6 @@ function Deer(startX, startY) {
         eyesValues.push((bottomEyeSum / bottomEyeFoodCount) || 0);
         eyesValues.push((leftEyeSum / leftEyeFoodCount) || 0);
 
-
-
         //console.log(topEye.getX() + " " + topEye.getY());
         //console.log(this.x + " " + this.y);
         //console.log(topEyeSum / topEyeFoodCount + " " + rightEyeSum / rightEyeFoodCount + " " + bottomEyeSum / bottomEyeFoodCount);
@@ -94,14 +93,45 @@ function Deer(startX, startY) {
     };
 
     //direction 0 = top, 1 = right, 2 = bottom, 3 = left
-    this.update = function(direction){
+    this.update = function(direction, canvasWidth, canvasHeight){
+        //first check if the move is possible (if deer is not at the border)
+        //if deer is behind border inc his movement variable, this is not final solution and should be changed
+        //TO DO
+        //switch (direction){
+        //    case 0 : {
+        //        if (this.y - this.moveAmount - this.sizeY/2 < 0){
+        //            direction = (direction + 1) % 4;
+        //        }
+        //    } break;
+        //    case 1 : {
+        //        if (this.x + this.moveAmount + this.sizeX/2 > canvasWidth){
+        //            direction = (direction + 1) % 4;
+        //        }
+        //    } break;
+        //    case 2 :{
+        //        if (this.y + this.moveAmount + this.sizeY/2 > canvasHeight){
+        //            direction = (direction + 1) % 4;
+        //        }
+        //    }  break;
+        //    case 3 : {
+        //        if (this.x - this.moveAmount - this.sizeX/2 < 0){
+        //            direction = (direction + 1) % 4;
+        //        }
+        //    } break;
+        //}
+
         switch (direction){
-            case 0 : this.y -= this.moveAmount; break;
-            case 1 : this.x += this.moveAmount; break;
-            case 2 : this.y += this.moveAmount; break;
-            case 3 : this.x -= this.moveAmount; break;
+            case 0 : this.y = ((this.y - this.moveAmount) + canvasHeight) % canvasHeight; break;
+            case 1 : this.x = ((this.x + this.moveAmount) + canvasWidth) % canvasWidth; break;
+            case 2 : this.y = ((this.y + this.moveAmount) + canvasHeight) % canvasHeight; break;
+            case 3 : this.x = ((this.x - this.moveAmount) + canvasWidth) % canvasWidth; break;
         }
     };
+
+    this.getNetwork = function(){
+        return this.neuralNetwork;
+    };
+
 }
 
 if(typeof module != "undefined")

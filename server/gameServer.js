@@ -12,7 +12,7 @@ var players;
 var food;
 var deers;
 
-
+var c = 0;
 
 module.exports = {
     onClientDisconnect: function(){
@@ -53,9 +53,10 @@ module.exports = {
         //send  food and deers to client
         this.emit("food", food);
         this.emit("deers", deers);
-        //for (i = 0; i < deers.length; i++) {
-        //    this.emit("deers", {x: deers[i].getX(), y: deers[i].getY()});
-        //}
+
+        util.log("Deers and food has been send to new player");
+
+        //neuralNet.logWeights();
     },
 
     onMovePlayer: function (data) {
@@ -77,7 +78,7 @@ module.exports = {
         food = [];
         deers = [];
 
-        var startX, startY;
+        var startX, startY, newNeuralNetwork;
 
         //to do - add cycle to add more food
         for(var i=0;i<config.foodCount;i++){
@@ -89,20 +90,22 @@ module.exports = {
         for(i=0;i<config.deerCount;i++){
             startX = Math.round(Math.random()*(config.canvasWidth-5));
             startY = Math.round(Math.random()*(config.canvasHeight-5));
-            deers.push(new Deer(startX, startY));
+            newNeuralNetwork = neuralNet.createNetwork();
+            deers.push(new Deer(startX, startY, newNeuralNetwork));
         }
     },
 
     //TO DO
     onUpdateFood: function(data){
-        console.log(data.length);
+        //console.log("Pocet jedla "+data.length);
         //food = data;
-
     },
+
 
     //throw eyesvalues into neural net and return direction which should deer move
     onEyesValues: function(data, callback){
-        callback(neuralNet(data));
+        callback(neuralNet.activateNet(data));
+        //util.log("Netwroks activated "+c++);
     }
 };
 

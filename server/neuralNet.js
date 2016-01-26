@@ -7,7 +7,20 @@ var Neuron = synaptic.Neuron,
     Trainer = synaptic.Trainer,
     Architect = synaptic.Architect;
 
-module.exports = function(eyesValues){
+var inputLayer = new Layer(4);
+var hiddenLayer = new Layer(6);
+var outputLayer = new Layer(4);
+
+inputLayer.project(hiddenLayer);
+hiddenLayer.project(outputLayer);
+
+var myNetwork = new Network({
+    input: inputLayer,
+    hidden: [hiddenLayer],
+    output: outputLayer
+});
+
+module.exports = {
 
 
     ///////////////////brain//////////////////////////
@@ -37,41 +50,53 @@ module.exports = function(eyesValues){
 
 
 
+    logWeights : function(){
+        //console.log(myNetwork.layers.input.list[0].connections);
+        var pole = [1,1,1,1];
+        console.log(myNetwork.activate(pole));
+
+        console.log();
+        //console.log(myNetwork.layers.input.list[0].connections.projected);
+
+        var jsonNet = myNetwork.toJSON();
+
+        //jsonNet.activate(eyesValues[0]);
+        myNetwork  = Network.fromJSON(jsonNet);
+        console.log(myNetwork.activate(pole));
+
+
+    },
 
 
 
 ///////////////SYNAPTIC//////////////
 
-    // create the network
-    var inputLayer = new Layer(4);
-    var hiddenLayer = new Layer(6);
-    var outputLayer = new Layer(4);
+    // create neural network for deer
+    createNetwork : function(){
+        myNetwork = new Network({
+            input: inputLayer,
+            hidden: [hiddenLayer],
+            output: outputLayer
+        });
+        return myNetwork.toJSON();
+    },
 
-    inputLayer.project(hiddenLayer);
-    hiddenLayer.project(outputLayer);
+    //activate networks
+    activateNet : function(deerNetworks) {
+        var output;
+        var directions = [];
+        for (var i = 0; i < deerNetworks.length; i++) {
+            myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
+            output = myNetwork.activate(deerNetworks[i].eyesValues);
+            directions.push(output.indexOf(Math.max.apply(Math, output)));
+        }
 
-    var myNetwork = new Network({
-        input: inputLayer,
-        hidden: [hiddenLayer],
-        output: outputLayer
-    });
 
-    //console.log(eyesValues);
-    var output;
-    var directions = [];
-    for (var i=0;i<eyesValues.length;i++){
-        output = myNetwork.activate(eyesValues[i]);
-        directions.push(output.indexOf(Math.max.apply( Math, output )));
+        //returning array of directions which should deers move, so array is as long as count of deers
+        return directions;
     }
 
-    //var maxX = Array.max(xArray);
-    //var index = xArray.indexOf(maxX);
 
-    //console.log(output.indexOf(Math.max.apply( Math, output )));
-
-
-    //returning array of directions, so array is as long as count of deers
-    return directions;
 
  ////train the network
  //   var learningRate = .3;
@@ -120,7 +145,7 @@ module.exports = function(eyesValues){
 //    myNetwork.trainer.XOR(); // <- train the network
    // console.log(myNetwork.layers.input.list[0].connections.projected[6].weight) // -0.09417646038345993
    // myNetwork.restore(); // <- popullate the network
-   // console.log(myNetwork.layers.input.list[0].connections.projected[7].weight);
+
    // console.log(myNetwork.layers.output.list[0].connections.inputs[12].weight);
    // console.log(myNetwork.layers.output.list[0].connections.inputs[13].weight);
     //console.log(myNetwork.layers.input);

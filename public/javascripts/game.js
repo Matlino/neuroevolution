@@ -1,7 +1,6 @@
 var bg = new Image();
 bg.src = "images/space.jpg";
 
-
 var ctx,			// Canvas rendering context
     keys,			// Keyboard input
     localPlayer,	// Local player
@@ -58,7 +57,7 @@ function displayFood(data){
 
 function displayDeers(data){
     for (var i=0;i<data.length; i++ ){
-        deers.push(new Deer(data[i].x, data[i].y));
+        deers.push(new Deer(data[i].x, data[i].y, data[i].neuralNetwork));
     }
 }
 
@@ -166,39 +165,43 @@ function update() {
         var playerX = localPlayer.getX();
         var playerY = localPlayer.getY();
 
-        //for (var i= 0; i < deers.length; i++ ) {
-            for (var i = 0; i < food.length; i++) {
-                if ((playerX + playerSizeX / 2 >= food[i].getX() - food[i].getSizeX() / 2
-                    && playerX - playerSizeX / 2 <= food[i].getX() + food[i].getSizeX() / 2)
-                    && (playerY + playerSizeY / 2 >= food[i].getY() - food[i].getSizeY() / 2
-                    && playerY - playerSizeY / 2 <= food[i].getY() + food[i].getSizeY() / 2)) {
-                    food.splice(i, 1);
-                    socket.emit("food", food);
-                }
-
-                //if ((deers[i].getX() + deers[i].getSizeX() / 2 >= food[j].getX() - food[j].getSizeX() / 2
-                //    && deers[i].getX() - deers[i].getSizeX() / 2 <= food[j].getX() + food[j].getSizeX() / 2)
-                //    && (deers[i].getY() + deers[i].getSizeY() / 2 >= food[j].getY() - food[j].getSizeY() / 2
-                //    && deers[i].getY() - deers[i].getSizeY() / 2 <= food[j].getY() + food[j].getSizeY() / 2)) {
-                //    food.splice(i, 1);
-                //    socket.emit
-                //}
+        for (var i = 0; i < food.length; i++) {
+            if ((playerX + playerSizeX / 2 >= food[i].getX() - food[i].getSizeX() / 2
+                && playerX - playerSizeX / 2 <= food[i].getX() + food[i].getSizeX() / 2)
+                && (playerY + playerSizeY / 2 >= food[i].getY() - food[i].getSizeY() / 2
+                && playerY - playerSizeY / 2 <= food[i].getY() + food[i].getSizeY() / 2)) {
+                food.splice(i, 1);
+                socket.emit("food", food);
             }
-       //}
-
-
+        }
     }
 
-    //sending eyesvalues of deers to server
-    var eyesValuesArray = [];
+    //collisions deers with food
     for (i= 0; i < deers.length; i++ ) {
-        eyesValuesArray.push(deers[i].getEyesValues(food));
+        for (var j = 0; j < food.length; j++) {
+            if ((deers[i].getX() + deers[i].getSizeX() / 2 >= food[j].getX() - food[j].getSizeX() / 2
+                && deers[i].getX() - deers[i].getSizeX() / 2 <= food[j].getX() + food[j].getSizeX() / 2)
+                && (deers[i].getY() + deers[i].getSizeY() / 2 >= food[j].getY() - food[j].getSizeY() / 2
+                && deers[i].getY() - deers[i].getSizeY() / 2 <= food[j].getY() + food[j].getSizeY() / 2)) {
+                food.splice(j, 1);
+                socket.emit("food", food);
+                console.log("Collison, food length: "+ food.length);
+            }
+        }
     }
 
-    socket.emit("eyesvalues", eyesValuesArray, function(data){
+    //send neural networks and eye values of deers to server
+    var eyesValuesArray = [];
+    var deerNetworks = [];
+    for (i= 0; i < deers.length; i++ ) {
+        //eyesValuesArray.push(deers[i].getEyesValues(food));
+        deerNetworks.push({eyesValues: deers[i].getEyesValues(food), neuralNetwork: deers[i].getNetwork()});
+    }
+
+    socket.emit("eyesvalues", deerNetworks, function(data){
         //console.log("Callback works, index: " + data);
         for (i= 0; i < deers.length; i++ ) {
-            deers[i].update(data[i]);
+            deers[i].update(data[i], canvasWidth, canvasHeight);
         }
     });
 }
