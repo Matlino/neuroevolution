@@ -144,7 +144,7 @@ function animate() {
     update();
     draw();
 
-    localPlayer.getEyesValues(food);
+    //localPlayer.getEyesValues(food);
 
     // Request a new animation frame using Paul Irish's shim
     //window.requestAnimFrame(animate);
@@ -198,12 +198,16 @@ function update() {
         deerNetworks.push({eyesValues: deers[i].getEyesValues(food), neuralNetwork: deers[i].getNetwork()});
     }
 
-    socket.emit("eyesvalues", deerNetworks, function(data){
+    /*socket.emit("eyesvalues", deerNetworks, function(data){
         //console.log("Callback works, index: " + data);
         for (i= 0; i < deers.length; i++ ) {
             deers[i].update(data[i], canvasWidth, canvasHeight);
         }
-    });
+    });*/
+
+    for (i= 0; i < deers.length; i++ ) {
+        deers[i].update(1, canvasWidth, canvasHeight);
+    }
 }
 
 /**************************************************
