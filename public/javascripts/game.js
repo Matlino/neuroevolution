@@ -12,6 +12,8 @@ var canvasHeight;
 var food;
 var deers;
 
+var measureFitness
+
 function initCanvas(){
     ctx = document.getElementById("myCanvas").getContext("2d");
     canvasWidth = ctx.canvas.width;
@@ -46,8 +48,40 @@ function initCanvas(){
 
 
     var animateInterval = setInterval(animate, 30);
+    var sendNetwork = setInterval(updateNetwork, 1000);
+    var decreaseHealh = setInterval(decreaseHealth, 1000);
+    measureFitness = setInterval(fitness, 6000);
+
     //animate();
 }
+
+function fitness(){
+
+
+    //sort deers by health
+    deers.sort(function(a, b){
+        return a.getHealth() - b.getHealth();
+    });
+
+
+  //  clearInterval(measureFitness);
+
+
+}
+
+function decreaseHealth(){
+    //console.log("AAAAAAAAA");
+    for (var i= 0; i < deers.length; i++ ) {
+        deers[i].decreaseHealth();
+        //console.log(deers[i].health);
+        if (deers[i].isAlive() == false){
+            deers.splice(i,1);
+            i--;
+        }
+    }
+    //console.log("\n")
+}
+
 
 function displayFood(data){
     for (var i=0;i<data.length; i++ ){
@@ -185,31 +219,36 @@ function update() {
                 && deers[i].getY() - deers[i].getSizeY() / 2 <= food[j].getY() + food[j].getSizeY() / 2)) {
                 food.splice(j, 1);
                 socket.emit("food", food);
-                console.log("Collison, food length: "+ food.length);
+
+                deers[i].increaseHealth();
             }
         }
     }
 
+
+    for (i= 0; i < deers.length; i++ ) {
+        deers[i].update(canvasWidth, canvasHeight);
+    }
+}
+
+function updateNetwork(){
+    //console.log("Netwrok upadting");
+
     //send neural networks and eye values of deers to server
     var eyesValuesArray = [];
     var deerNetworks = [];
-    for (i= 0; i < deers.length; i++ ) {
+    for (var i= 0; i < deers.length; i++ ) {
         //eyesValuesArray.push(deers[i].getEyesValues(food));
         deerNetworks.push({eyesValues: deers[i].getEyesValues(food), neuralNetwork: deers[i].getNetwork()});
     }
 
-    /*socket.emit("eyesvalues", deerNetworks, function(data){
+    socket.emit("eyesvalues", deerNetworks, function(data){
         //console.log("Callback works, index: " + data);
         for (i= 0; i < deers.length; i++ ) {
-            deers[i].update(data[i], canvasWidth, canvasHeight);
+            deers[i].setDirection(data[i]);
         }
-    });*/
-
-    for (i= 0; i < deers.length; i++ ) {
-        deers[i].update(1, canvasWidth, canvasHeight);
-    }
+    });
 }
-
 /**************************************************
  ** GAME DRAW
  **************************************************/

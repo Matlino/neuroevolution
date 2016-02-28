@@ -10,14 +10,16 @@ function Deer(startX, startY, neuralNetwork) {
 
     this.id = 0;
     this.moveAmount = 2;
+    this.direction = 2; //0 up, 1 right, 2 bot, 3 left
     this.neuralNetwork = neuralNetwork;
+    this.health = 10;
 
     this.draw = function(ctx) {
         ctx.fillStyle = "blue";
         ctx.fillRect(this.x-5, this.y-5, this.sizeX, this.sizeY);
     };
 
-    //every deer has 4 eyes, and every eye returns average distances to food
+    //every deer has 4 eyes, and every eye returns average distance to food in its own quadrant
     this.getEyesValues = function(food){
         var topEye = new Point(this.x, this.y - this.sizeY/2);
         var rightEye = new Point(this.x + this.sizeX/2, this.y);
@@ -93,7 +95,7 @@ function Deer(startX, startY, neuralNetwork) {
     };
 
     //direction 0 = top, 1 = right, 2 = bottom, 3 = left
-    this.update = function(direction, canvasWidth, canvasHeight){
+    this.update = function(canvasWidth, canvasHeight){
         //first check if the move is possible (if deer is not at the border)
         //if deer is behind border inc his movement variable, this is not final solution and should be changed
         //TO DO
@@ -120,7 +122,7 @@ function Deer(startX, startY, neuralNetwork) {
         //    } break;
         //}
 
-        switch (direction){
+        switch (this.direction){
             case 0 : this.y = ((this.y - this.moveAmount) + canvasHeight) % canvasHeight; break;
             case 1 : this.x = ((this.x + this.moveAmount) + canvasWidth) % canvasWidth; break;
             case 2 : this.y = ((this.y + this.moveAmount) + canvasHeight) % canvasHeight; break;
@@ -130,6 +132,26 @@ function Deer(startX, startY, neuralNetwork) {
 
     this.getNetwork = function(){
         return this.neuralNetwork;
+    };
+
+    this.setDirection = function(newDirection){
+        this.direction = newDirection;
+    };
+
+    this.decreaseHealth = function(){
+        this.health -= 1;
+    };
+
+    this.increaseHealth = function(){
+        this.health += 1;
+    };
+
+    this.isAlive = function(){
+        return this.health > 0
+    };
+
+    this.getHealth = function(){
+      return this.health;
     };
 
 }

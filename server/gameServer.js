@@ -74,6 +74,8 @@ module.exports = {
     },
 
     init: function() {
+        neuralNet.getWeights();
+
         players = [];
         food = [];
         deers = [];

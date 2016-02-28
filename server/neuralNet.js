@@ -8,7 +8,7 @@ var Neuron = synaptic.Neuron,
     Architect = synaptic.Architect;
 
 var inputLayer = new Layer(4);
-var hiddenLayer = new Layer(6);
+var hiddenLayer = new Layer(4);
 var outputLayer = new Layer(4);
 
 inputLayer.project(hiddenLayer);
@@ -78,6 +78,30 @@ module.exports = {
             hidden: [hiddenLayer],
             output: outputLayer
         });
+
+
+        layer_size = 4;
+        for (var j = 0; j < layer_size; j++) {
+            var keys = Object.keys(myNetwork.layers.input.list[j].connections.projected);
+            for (var i in keys) {
+                console.log(myNetwork.layers.input.list[j].connections.projected[keys[i]].weight)
+            }
+        }
+
+        console.log();
+
+        for (j = 0; j < layer_size; j++) {
+            keys = Object.keys(myNetwork.layers.output.list[j].connections.inputs);
+            for (i in keys) {
+                console.log(myNetwork.layers.output.list[j].connections.inputs[keys[i]].weight)
+            }
+        }
+
+        console.log()
+        for (j = 0; j < 10; j++) {
+            console.log(Math.random());// * .2 - .1)
+        }
+
         return myNetwork.toJSON();
     },
 
@@ -86,75 +110,40 @@ module.exports = {
         var output;
         var directions = [];
         for (var i = 0; i < deerNetworks.length; i++) {
-            //myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
-            //output = myNetwork.activate(deerNetworks[i].eyesValues);
-            //directions.push(output.indexOf(Math.max.apply(Math, output)));
+            myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
+            output = myNetwork.activate(deerNetworks[i].eyesValues);
+            directions.push(output.indexOf(Math.max.apply(Math, output)));
 
-            directions.push(1);
+            //directions.push(1);
         }
 
 
         //returning array of directions which should deers move, so array is as long as count of deers
         return directions;
+    },
+
+    getWeights : function() {
+        //layer_size = 4;
+        //for (var j = 0; j < layer_size; j++) {
+        //    var keys = Object.keys(myNetwork.layers.input.list[j].connections.projected);
+        //    for (var i in keys) {
+        //        console.log(myNetwork.layers.input.list[j].connections.projected[keys[i]].weight)
+        //    }
+        //}
+        //
+        //console.log();
+        //
+        //for (j = 0; j < layer_size; j++) {
+        //    keys = Object.keys(myNetwork.layers.output.list[j].connections.inputs);
+        //    for (i in keys) {
+        //        console.log(myNetwork.layers.output.list[j].connections.inputs[keys[i]].weight)
+        //    }
+        //}
+        //
+        //console.log()
+        //for (j = 0; j < 10; j++) {
+        //    console.log(Math.random());// * .2 - .1)
+        //}
     }
 
-
-
- ////train the network
- //   var learningRate = .3;
- //   for (var i = 0; i < 20000; i++)
- //   {
- //       // 0,0 => 0
- //       myNetwork.activate([0,0]);
- //       myNetwork.propagate(learningRate, [0]);
- //
- //       // 0,1 => 1
- //       myNetwork.activate([0,1]);
- //       myNetwork.propagate(learningRate, [1]);
- //
- //       // 1,0 => 1
- //       myNetwork.activate([1,0]);
- //       myNetwork.propagate(learningRate, [1]);
- //
- //       // 1,1 => 0
- //       myNetwork.activate([1,1]);
- //       myNetwork.propagate(learningRate, [0]);
- //   }
-
-
-// test the network
-//    myNetwork.activate([0,0]); // [0.015020775950893527]
-//    myNetwork.activate([0,1]); // [0.9815816381088985]
-//    myNetwork.activate([1,0]); // [0.9871822457132193]
-//    myNetwork.activate([1,1]); // [0.012950087641929467]
-
-    //console.log(myNetwork.activate([eyesValues[0],eyesValues[1],eyesValues[2],eyesValues[3]]));
-
-    //console.log(myNetwork.activate([100000,1,-10000,1]));
-
-
-
-    // var myNetwork = new Architect.Perceptron(2,4,1);
-
-    //tymto zistim ake je to pole velke
-    //console.log(Object.keys(myNetwork.layers.input.list[0].connections.projected));
-
-    //console.log(Object.keys(myNetwork.layers.hidden.list));
-
-
-    //console.log(myNetwork.layers.input.list[0].connections.projected[7].weight) // -0.09417646038345993
-//
-//    myNetwork.trainer.XOR(); // <- train the network
-   // console.log(myNetwork.layers.input.list[0].connections.projected[6].weight) // -0.09417646038345993
-   // myNetwork.restore(); // <- popullate the network
-
-   // console.log(myNetwork.layers.output.list[0].connections.inputs[12].weight);
-   // console.log(myNetwork.layers.output.list[0].connections.inputs[13].weight);
-    //console.log(myNetwork.layers.input);
-
-    //myNetwork.layers.input.list[0].connections.projected[7].weight = 10000;
-    //myNetwork.layers.input.list[0].connections.projected[8].weight = 10000;
-    //myNetwork.layers.input.list[0].connections.projected[10].weight = 10000;
-  //  console.log(myNetwork.layers.input.list[0].connections.projected[5].weight) // 0.9376776976219627
- //   console.log(myNetwork.activate([10,5]));
 };
