@@ -63,10 +63,20 @@ function fitness(){
         return a.getHealth() - b.getHealth();
     });
 
+    for (var j=0;j<deers.length;j++){
+        console.log(deers[j].health);
+    }
 
-  //  clearInterval(measureFitness);
 
 
+    clearInterval(measureFitness);
+
+    mutation()
+}
+
+function mutation(){
+    var mutationCount = 5;
+    //for (j=deers.length; j)
 }
 
 function decreaseHealth(){
