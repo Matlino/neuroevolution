@@ -1,4 +1,4 @@
-Simulation of organisms evolution using neuroevolution
+## Simulation of organisms evolution using neuroevolution
 
 Project is in early stage of development and is deployed here for testing purposes: http://woe.azurewebsites.net/. 
 
