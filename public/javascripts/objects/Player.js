@@ -103,15 +103,26 @@ function Player(startX, startY) {
         eyesValues.push((bottomEyeSum / bottomEyeFoodCount) || 0);
         eyesValues.push((leftEyeSum / leftEyeFoodCount) || 0);
 
-
-
-        //console.log(topEye.getX() + " " + topEye.getY());
-        //console.log(this.x + " " + this.y);
-        //console.log(topEyeSum / topEyeFoodCount + " " + rightEyeSum / rightEyeFoodCount + " " + bottomEyeSum / bottomEyeFoodCount);
-        //console.log(topEyeFoodCount + " " + rightEyeFoodCount + " " + bottomEyeFoodCount + " " + leftEyeFoodCount);
-
         return eyesValues;
-    }
+    };
+
+    /**
+     * check player collision with all food
+     * return
+     * @param food
+     * @returns {number} return index of food which collide with player or -1 if there is no collision
+     */
+    this.foodCollision = function(food){
+        for (var i = 0; i < food.length; i++) {
+            if ((this.getX() + this.getSizeX() / 2 >= food[i].getX() - food[i].getSizeX() / 2
+                && this.getX() - this.getSizeX() / 2 <= food[i].getX() + food[i].getSizeX() / 2)
+                && (this.getY() + this.getSizeY() / 2 >= food[i].getY() - food[i].getSizeY() / 2
+                && this.getY() - this.getSizeY() / 2 <= food[i].getY() + food[i].getSizeY() / 2)) {
+                    return i;
+            }
+        }
+        return -1;
+    };
 }
 
 

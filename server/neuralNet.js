@@ -7,102 +7,30 @@ var Neuron = synaptic.Neuron,
     Trainer = synaptic.Trainer,
     Architect = synaptic.Architect;
 
-var inputLayer = new Layer(4);
-var hiddenLayer = new Layer(4);
-var outputLayer = new Layer(4);
-
-inputLayer.project(hiddenLayer);
-hiddenLayer.project(outputLayer);
-
-var myNetwork = new Network({
-    input: inputLayer,
-    hidden: [hiddenLayer],
-    output: outputLayer
-});
+//every layer could have different size later on
+var layer_size = 4;
 
 module.exports = {
-
-
-    ///////////////////brain//////////////////////////
-
-   // var net = new brain.NeuralNetwork({
-   //     hiddenLayers: [3]
-   // });
-   //
-   // //console.log(net.weights);
-   //
-   // net.train([{input: [0, 0], output: [0]},
-   //     {input: [0, 1], output: [1]},
-   //     {input: [1, 0], output: [1]},
-   //     {input: [1, 1], output: [0]}]);
-   //
-   // var output = net.run([1, 0]);  // [0.987]
-   // console.log(output);
-   //
-   // console.log(net.weights);
-   // net.weights[1][0][0] = 1000;
-   //
-   //// console.log(net.weights[1][0][0]);
-   //
-   //
-   // var output = net.run([1, 0]);  // [0.987]
-   //// console.log(output);
-
-
-
-    logWeights : function(){
-        //console.log(myNetwork.layers.input.list[0].connections);
-        var pole = [1,1,1,1];
-        console.log(myNetwork.activate(pole));
-
-        console.log();
-        //console.log(myNetwork.layers.input.list[0].connections.projected);
-
-        var jsonNet = myNetwork.toJSON();
-
-        //jsonNet.activate(eyesValues[0]);
-        myNetwork  = Network.fromJSON(jsonNet);
-        console.log(myNetwork.activate(pole));
-
-
-    },
-
-
-
-///////////////SYNAPTIC//////////////
-
     // create neural network for deer
     createNetwork : function(){
-        myNetwork = new Network({
+        var inputLayer = new Layer(layer_size);
+        var hiddenLayer = new Layer(layer_size);
+        var outputLayer = new Layer(layer_size);
+
+        inputLayer.project(hiddenLayer);
+        hiddenLayer.project(outputLayer);
+
+        var myNetwork = new Network({
             input: inputLayer,
             hidden: [hiddenLayer],
             output: outputLayer
         });
 
+        return myNetwork;
+    },
 
-        layer_size = 4;
-        for (var j = 0; j < layer_size; j++) {
-            var keys = Object.keys(myNetwork.layers.input.list[j].connections.projected);
-            for (var i in keys) {
-                console.log(myNetwork.layers.input.list[j].connections.projected[keys[i]].weight)
-            }
-        }
-
-        console.log();
-
-        for (j = 0; j < layer_size; j++) {
-            keys = Object.keys(myNetwork.layers.output.list[j].connections.inputs);
-            for (i in keys) {
-                console.log(myNetwork.layers.output.list[j].connections.inputs[keys[i]].weight)
-            }
-        }
-
-        console.log()
-        for (j = 0; j < 10; j++) {
-            console.log(Math.random());// * .2 - .1)
-        }
-
-        return myNetwork.toJSON();
+    neuralNetworkToJSON : function(neuralNetwork){
+        return neuralNetwork.toJSON()
     },
 
     //activate networks
@@ -110,40 +38,101 @@ module.exports = {
         var output;
         var directions = [];
         for (var i = 0; i < deerNetworks.length; i++) {
-            myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
+            var myNetwork = Network.fromJSON(deerNetworks[i].neuralNetwork);
             output = myNetwork.activate(deerNetworks[i].eyesValues);
             directions.push(output.indexOf(Math.max.apply(Math, output)));
-
-            //directions.push(1);
         }
-
-
         //returning array of directions which should deers move, so array is as long as count of deers
         return directions;
     },
 
-    getWeights : function() {
-        //layer_size = 4;
-        //for (var j = 0; j < layer_size; j++) {
-        //    var keys = Object.keys(myNetwork.layers.input.list[j].connections.projected);
-        //    for (var i in keys) {
-        //        console.log(myNetwork.layers.input.list[j].connections.projected[keys[i]].weight)
-        //    }
-        //}
-        //
-        //console.log();
-        //
-        //for (j = 0; j < layer_size; j++) {
-        //    keys = Object.keys(myNetwork.layers.output.list[j].connections.inputs);
-        //    for (i in keys) {
-        //        console.log(myNetwork.layers.output.list[j].connections.inputs[keys[i]].weight)
-        //    }
-        //}
-        //
-        //console.log()
-        //for (j = 0; j < 10; j++) {
-        //    console.log(Math.random());// * .2 - .1)
-        //}
+    /**
+     * sort deers by health and then mutate best n of them.
+     * Return neural networks with mutated weights.
+     * @param deers
+     * @returns {Array}
+     */
+    mutation : function(deers) {
+        var mutationCount = 5;
+        var i,j;
+
+        //sort deers by health
+        deers.sort(function(a, b){
+            return a.health - b.health;
+        });
+
+        var mutationDeers = [];
+        for (j=deers.length-1; j>deers.length-mutationCount-1; j--){
+            mutationDeers.push(deers[j])
+        }
+
+        var mutatedNetworks = [];
+        var keys;
+        var newKeys;
+        var actNetwork;
+        var mutatedNetwork;
+        for (var index = 0; index<mutationDeers.length; index++){
+            actNetwork = Network.fromJSON(mutationDeers[index].neuralNetwork);
+            mutatedNetwork = this.createNetwork();
+
+
+            for (j = 0; j < layer_size; j++) {
+                keys = Object.keys(actNetwork.layers.input.list[j].connections.projected);
+                newKeys = Object.keys(mutatedNetwork.layers.input.list[j].connections.projected);
+
+                for (i = 0;i < keys.length; i++){
+                    mutatedNetwork.layers.input.list[j].connections.projected[newKeys[i]].weight =
+                        weightMutation(actNetwork.layers.input.list[j].connections.projected[keys[i]].weight);
+                }
+            }
+
+
+            for (j = 0; j < layer_size; j++) {
+                keys = Object.keys(actNetwork.layers.output.list[j].connections.inputs);
+                newKeys = Object.keys(mutatedNetwork.layers.output.list[j].connections.inputs);
+                for (i = 0; i < keys.length; i++) {
+                    mutatedNetwork.layers.output.list[j].connections.inputs[newKeys[i]].weight =
+                        weightMutation(actNetwork.layers.output.list[j].connections.inputs[keys[i]].weight);
+                }
+            }
+            mutatedNetworks.push(mutatedNetwork);
+        }
+
+        return mutatedNetworks;
+    }
+};
+
+function weightMutation(weight){
+    //50% chance it add 0.1 to weight or subtract 0.1
+    //TO DO exp when weight go more than 1 orr less than -1
+    var weightChange = 0.1;
+    var threshold = 0.5;
+    if (Math.random() > threshold){
+        return weight + weightChange;
+    }else{
+        return weight - weightChange
+    }
+}
+
+/**
+ * print weights of neural network
+ * @param network
+ */
+function printWeights(network){
+    var i,j;
+    for (j = 0; j < layer_size; j++) {
+        var keys = Object.keys(network.layers.input.list[j].connections.projected);
+        for (i in keys) {
+            console.log(network.layers.input.list[j].connections.projected[keys[i]].weight);
+        }
     }
 
-};
+    console.log();
+
+    for (j = 0; j < layer_size; j++) {
+        keys = Object.keys(network.layers.output.list[j].connections.inputs);
+        for (i in keys) {
+            console.log(network.layers.output.list[j].connections.inputs[keys[i]].weight);
+        }
+    }
+}

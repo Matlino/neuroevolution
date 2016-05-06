@@ -22,7 +22,6 @@ function initCanvas(){
     socket = io.connect();
 
 
-
     var startX = Math.round(Math.random()*(canvasWidth-5)),
         startY = Math.round(Math.random()*(canvasHeight-5));
 
@@ -39,11 +38,12 @@ function initCanvas(){
 
     socket.on("connect", onSocketConnected);
     socket.on("disconnect", onSocketDisconnect);
-    socket.on("new player", onNewPlayer);
-    socket.on("move player", onMovePlayer);
+    socket.on("new_player", onNewPlayer);
+    socket.on("move_player", onMovePlayer);
     socket.on("remove player", onRemovePlayer);
 
     socket.on("food", displayFood);
+    socket.on("remove_food", onRemoveFood);
     socket.on("deers", displayDeers);
 
 
@@ -55,43 +55,60 @@ function initCanvas(){
     //animate();
 }
 
-function fitness(){
-
-
-    //sort deers by health
-    deers.sort(function(a, b){
-        return a.getHealth() - b.getHealth();
-    });
-
-    for (var j=0;j<deers.length;j++){
-        console.log(deers[j].health);
-    }
-
-
-
-    clearInterval(measureFitness);
-
-    mutation()
+function onRemoveFood(foodIndex){
+    console.log("Food collisei index: ", foodIndex);
+    food.splice(foodIndex, 1);
 }
 
-function mutation(){
-    var mutationCount = 5;
-    //for (j=deers.length; j)
+function onSocketConnected() {
+    console.log("Connected to socket server");
+
+    //tell server to create my player object
+    socket.emit("new_player", {x: localPlayer.getX(), y: localPlayer.getY()});
+}
+
+//this should be moved to config file
+var canvasWidth =  1000;
+var canvasHeight = 500;
+//measure fitness (health of deers for now) and send networks to server for mutation
+function fitness(){
+    var i;
+    var tempDeers = [];
+    var startX, startY;
+
+    for (i=0;i<deers.length;i++){
+        tempDeers.push({health: deers[i].getHealth(), neuralNetwork: deers[i].getNetwork()});
+    }
+
+    socket.emit("mutation", tempDeers, function(mutatedNetworks){
+        for (i=0;i<mutatedNetworks.length;i++) {
+            startX = Math.round(Math.random() * (canvasWidth - 5));
+            startY = Math.round(Math.random() * (canvasHeight - 5));
+
+            deers.push(new Deer(startX, startY, mutatedNetworks[i]));
+        }
+    });
 }
 
 function decreaseHealth(){
-    //console.log("AAAAAAAAA");
+    var foodThreshold = 50;
+    var startX,startY;
+    if (food.length < foodThreshold){
+        startX = Math.round(Math.random()*(canvasWidth-5));
+        startY = Math.round(Math.random()*(canvasHeight-5));
+        food.push(new Food(startX, startY));
+    }
+
+
     for (var i= 0; i < deers.length; i++ ) {
         deers[i].decreaseHealth();
-        //console.log(deers[i].health);
+
         if (deers[i].isAlive() == false){
             deers.splice(i,1);
             i--;
         }
     }
-    //console.log("\n")
 }
-
 
 function displayFood(data){
     for (var i=0;i<data.length; i++ ){
@@ -105,13 +122,6 @@ function displayDeers(data){
     }
 }
 
-
-function onSocketConnected() {
-    console.log("Connected to socket server");
-
-    //tell server to create my player object
-    socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY()});
-}
 
 function onSocketDisconnect() {
     console.log("Disconnected from socket server");
@@ -180,43 +190,32 @@ function onResize(e) {
 
 
 /**************************************************
- ** GAME ANIMATION LOOP
+ ** ANIMATION LOOP
  **************************************************/
 function animate() {
-
-
     update();
     draw();
-
-    //localPlayer.getEyesValues(food);
 
     // Request a new animation frame using Paul Irish's shim
     //window.requestAnimFrame(animate);
 }
 
 /**************************************************
- ** GAME UPDATE
+ ** UPDATE
  **************************************************/
-//checking collision function should ne in object file probably
-//server should have probably his won update function where he check collision of all objects at once
+//checking collision function should be moved in object file
+//server should have probably his own update function where he check collision of all objects at once
 function update() {
     if (localPlayer.update(keys)) {
-        socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY()});
+        socket.emit("move_player", {x: localPlayer.getX(), y: localPlayer.getY()}, function(data){
 
-        //chcek collision with food
-        var playerSizeX = localPlayer.getSizeX();
-        var playerSizeY = localPlayer.getSizeY();
-        var playerX = localPlayer.getX();
-        var playerY = localPlayer.getY();
+        });
 
-        for (var i = 0; i < food.length; i++) {
-            if ((playerX + playerSizeX / 2 >= food[i].getX() - food[i].getSizeX() / 2
-                && playerX - playerSizeX / 2 <= food[i].getX() + food[i].getSizeX() / 2)
-                && (playerY + playerSizeY / 2 >= food[i].getY() - food[i].getSizeY() / 2
-                && playerY - playerSizeY / 2 <= food[i].getY() + food[i].getSizeY() / 2)) {
-                food.splice(i, 1);
-                socket.emit("food", food);
-            }
+        // i cant send food to server, i need to move this code to server
+        var foodIndex = localPlayer.foodCollision(food)
+        if (foodIndex != -1){
+            food.splice(foodIndex, 1);
+            socket.emit("food", food);
         }
     }
 
@@ -245,22 +244,20 @@ function updateNetwork(){
     //console.log("Netwrok upadting");
 
     //send neural networks and eye values of deers to server
-    var eyesValuesArray = [];
     var deerNetworks = [];
     for (var i= 0; i < deers.length; i++ ) {
-        //eyesValuesArray.push(deers[i].getEyesValues(food));
-        deerNetworks.push({eyesValues: deers[i].getEyesValues(food), neuralNetwork: deers[i].getNetwork()});
+        deerNetworks.push({eyesValues: deers[i].getEyesValues(food), neuralNetwork: deers[i].getNetwork()});  //delete later
     }
 
     socket.emit("eyesvalues", deerNetworks, function(data){
-        //console.log("Callback works, index: " + data);
         for (i= 0; i < deers.length; i++ ) {
             deers[i].setDirection(data[i]);
         }
     });
 }
+
 /**************************************************
- ** GAME DRAW
+ ** Draw
  **************************************************/
 function draw() {
     // Wipe the canvas clean
@@ -302,7 +299,7 @@ function playerById(id) {
 
 
 
-//testing some shapes and graphics, not using now
+//testing some shapes and graphics, not used right now
 function drawShapes(){
     var leather = new Image();
     leather.src = "images/leather.jpg";

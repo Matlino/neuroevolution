@@ -12,6 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
+// localhost port is 3000 and in production it choose automatically
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -24,9 +25,10 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
 //exporting io variable to other js files
-module.exports = io;
+// module.exports = io; //this didnt work
 var serverChat = require('../server/listeners.js');
 serverChat(io);
+
 /**
  * Listen on provided port, on all network interfaces.
  */

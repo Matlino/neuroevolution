@@ -1,20 +1,37 @@
 var util = require("util");
 
-var io = require("../bin/www");
 var config = require('../config');
 var Player = require("../public/javascripts/objects/Player");
 var Food = require("../public/javascripts/objects/Food");
 var Deer = require("../public/javascripts/objects/Deer");
 var neuralNet = require('../server/neuralNet.js');
 
-
 var players;
 var food;
 var deers;
 
-var c = 0;
-
 module.exports = {
+    init: function() {
+        players = [];
+        food = [];
+        deers = [];
+
+        var startX, startY, newNeuralNetwork;
+
+        for(var i=0;i<config.foodCount;i++){
+            startX = Math.round(Math.random()*(config.canvasWidth-5));
+            startY = Math.round(Math.random()*(config.canvasHeight-5));
+            food.push(new Food(startX, startY));
+        }
+
+        for(i=0;i<config.deerCount;i++){
+            startX = Math.round(Math.random()*(config.canvasWidth-5));
+            startY = Math.round(Math.random()*(config.canvasHeight-5));
+            newNeuralNetwork = neuralNet.neuralNetworkToJSON(neuralNet.createNetwork());
+            deers.push(new Deer(startX, startY, newNeuralNetwork));
+        }
+    },
+
     onClientDisconnect: function(){
         util.log("Player has disconnected: "+this.id);
 
@@ -35,14 +52,14 @@ module.exports = {
         newPlayer.id = this.id;
 
         //send new player info to other players
-        this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
+        this.broadcast.emit("new_player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY()});
 
         //send existing players info to the new player
         var i, existingPlayer;
         util.log("Length of players array: "+players.length);
         for (i = 0; i < players.length; i++) {
             existingPlayer = players[i];
-            this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY()});
+            this.emit("new_player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY()});
         }
 
         //add new player to array of players
@@ -56,7 +73,6 @@ module.exports = {
 
         util.log("Deers and food has been send to new player");
 
-        //neuralNet.logWeights();
     },
 
     onMovePlayer: function (data) {
@@ -70,44 +86,26 @@ module.exports = {
         movePlayer.setX(data.x);
         movePlayer.setY(data.y);
 
-        this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
-    },
+        this.broadcast.emit("move_player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY()});
 
-    init: function() {
-        neuralNet.getWeights();
-
-        players = [];
-        food = [];
-        deers = [];
-
-        var startX, startY, newNeuralNetwork;
-
-        //to do - add cycle to add more food
-        for(var i=0;i<config.foodCount;i++){
-            startX = Math.round(Math.random()*(config.canvasWidth-5));
-            startY = Math.round(Math.random()*(config.canvasHeight-5));
-            food.push(new Food(startX, startY));
-        }
-
-        for(i=0;i<config.deerCount;i++){
-            startX = Math.round(Math.random()*(config.canvasWidth-5));
-            startY = Math.round(Math.random()*(config.canvasHeight-5));
-            newNeuralNetwork = neuralNet.createNetwork();
-            deers.push(new Deer(startX, startY, newNeuralNetwork));
-        }
     },
 
     //TO DO
     onUpdateFood: function(data){
-        //console.log("Pocet jedla "+data.length);
-        //food = data;
+
     },
 
 
     //throw eyesvalues into neural net and return direction which should deer move
     onEyesValues: function(data, callback){
         callback(neuralNet.activateNet(data));
-        //util.log("Netwroks activated "+c++);
+        //util.log("Networks activated "+c++);
+    },
+
+    onMutation: function(deers,callback){
+        if (deers.length > 0) {
+            callback(neuralNet.mutation(deers));
+        }
     }
 };
 
